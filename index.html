@@ -228,7 +228,7 @@ const SECTIONS = [
 
 /* ---------- FOLHA ---------- */
 { id:"processos", m:"folha", n:"01", title:"Processos de folha", path:p("Folha de Pagamento","Processos"),
-  keys:"processo mes abrir competencia sequenciamento calculo automatico",
+  keys:"processo mes abrir fechar periodo competencia calculo automatico lancamento evento vale refeicao alimentacao vr va auxilio creche importador massivo go live implementacao",
   html:`
   <ul class="plain">
     <li>Todos os processos mensais ficam reunidos em uma única tela.</li>
@@ -251,7 +251,43 @@ const SECTIONS = [
   </ol>
   <div class="callout note"><strong>Acompanhe o estado de cada processo</strong>Na aba Processos, use os filtros <b>Todos, Iniciados, Em revisão e Pagos</b>. Cada linha mostra tipo, número de colaboradores, estado e visibilidade dos recibos.</div>
   <div class="callout warn"><strong>Abrir o mês não basta</strong>O cálculo só acontece depois que o processo/pagamento correspondente é criado dentro do mês. Sempre crie o processo após abrir o mês.</div>
-  <h2>Passo 3 · Fechar o período</h2>
+  <h2>Passo 3 · Lançar eventos na folha</h2>
+  <p>Valores que variam no mês, como <b>vale-refeição, vale-alimentação ou auxílio-creche</b>, são lançados como eventos. Há duas formas:</p>
+  <div class="grid">
+    <div class="card"><h4>Individual</h4><p>Para lançar um evento para uma pessoa, direto na ficha do colaborador.</p></div>
+    <div class="card"><h4>Importador massivo</h4><p>Para lançar para vários colaboradores de uma vez, por planilha.</p></div>
+  </div>
+  <h2>3A · Lançamento individual</h2>
+  <div class="path" data-path="Administrativo › Colaboradores › Colaboradores"><b>Administrativo</b><span class="sep">›</span><b>Colaboradores</b><span class="sep">›</span><b>Colaboradores</b><button type="button" data-copy>Copiar</button></div>
+  <ol class="steps">
+    <li>Na lista de colaboradores, clique no nome da pessoa.</li>
+    <li>Na ficha, abra a aba <b>Eventos</b> e escolha o tipo: <b>Proventos</b> (ex.: auxílio-creche) ou <b>Descontos</b> (ex.: desconto de VR/VA). Também há Informativos, Contribuições Patronais, Pagamentos Retroativos e Créditos.</li>
+    <li>Clique em <b>Lançar provento</b> (ou Lançar desconto).</li>
+    <li>Em <b>Atribuir Provento</b>, selecione o evento no campo <b>Provento</b> e o <b>comprovante de pagamento</b> (por padrão, Salário).</li>
+    <li>Informe a <b>Data Início</b> (competência). Para lançar só naquele mês, marque <b>Adicionar mês término</b> com o mesmo mês.</li>
+    <li>Preencha o valor e clique em <b>Atribuir</b>.</li>
+  </ol>
+  <h2>3B · Lançamento por importador massivo</h2>
+  <div class="path" data-path="Relatórios › Importadores › Importadores › Eventos e KPI › Eventos"><b>Relatórios</b><span class="sep">›</span><b>Importadores</b><span class="sep">›</span><b>Importadores</b><span class="sep">›</span><b>Eventos e KPI</b><span class="sep">›</span><b>Eventos</b><button type="button" data-copy>Copiar</button></div>
+  <ol class="steps">
+    <li>No menu lateral, acesse <b>Relatórios › Importadores › Importadores</b>. Na aba Administrativo, filtre por <b>Eventos e KPI</b> e abra <b>Eventos</b>.</li>
+    <li>Clique em <b>Iniciar Processo</b>.</li>
+    <li>Selecione o <b>Período</b> e o <b>Evento a ser carregado</b> (ex.: Auxílio-creche). Para vários eventos na mesma planilha, marque “Fazer o upload de múltiplos eventos simultaneamente”.</li>
+    <li>Clique em <b>Download planilha</b> e preencha o modelo.</li>
+    <li>Mantenha <b>Recalcular recibos de pagamento</b> marcada e escolha o Tipo de lançamento (normalmente <b>Lançamento Único</b>).</li>
+    <li>Clique em <b>Fazer upload do arquivo</b> e acompanhe o resultado no <b>Histórico de uploads</b> (Concluído, Erro ou Finalizado com advertência). Em caso de erro, baixe o arquivo com os erros, corrija e reenvie.</li>
+  </ol>
+  <div class="table-wrap"><table>
+    <tr><th>Coluna da planilha</th><th>Preenchimento</th></tr>
+    <tr><td>Número de Documento</td><td>CPF do colaborador, no formato correto e sem espaços</td></tr>
+    <tr><td>Código de Ficha</td><td>Código da ficha (pode ficar em branco se houver só uma)</td></tr>
+    <tr><td>Valor*</td><td>Valor usado para calcular o evento (obrigatório)</td></tr>
+    <tr><td>Detalhes</td><td>Informação adicional do lançamento (opcional)</td></tr>
+    <tr><td>Tipo de Recibo de pagamento</td><td>Recibo onde o evento entra. Em branco, vai para o recibo de Salário</td></tr>
+  </table></div>
+  <div class="callout note"><strong>Novo importador</strong>A plataforma avisa que o importador antigo de eventos deixa de existir em <b>30/10</b>. A partir daí, use <b>Folha de Pagamento › Eventos › Importador › Criar Lançamentos</b>, que valida cada linha separadamente e salva os registros corretos (veja a seção Adiantamento salarial).</div>
+  <h2>Passo 4 · Fechar o período</h2>
+  <div class="callout warn"><strong>Somente após o go live</strong>Durante a <b>implementação</b> não é possível fechar o período. O fechamento só fica disponível depois do go live.</div>
   <ol class="steps">
     <li>Concluídos os cálculos e o pagamento dos processos do mês, volte para a tela do período.</li>
     <li>Clique em <b>Fechar período</b>, no canto superior direito.</li>
