@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manual Buk · Primeiros passos e Folha de Pagamento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1E2A5E; --navy-2:#2E44A8; --orange:#E8692F; --yellow:#F5A623; --green:#2E8B57;
+  --bg:#FFFFFF; --surface:#F3F5FC; --surface-2:#E7ECFA; --text:#1C2340; --muted:#5B6380; --line:#D9DFF2;
+  --warn-bg:#FCE4D8; --warn-text:#8A3A12; --note-bg:#FBE3B4; --note-text:#5A3E05;
+  --side:#1E2A5E; --side-text:#DCE2F7; --side-muted:#93A0CC;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121834; --surface:#1A2246; --surface-2:#232D5A; --text:#E6EAF8; --muted:#A3ADCF; --line:#2F3A6B;
+    --warn-bg:#3A2418; --warn-text:#F4B897; --note-bg:#3A3018; --note-text:#F3D597;
+    --side:#0E1430; --side-text:#DCE2F7; --side-muted:#8390BE; --navy-2:#8FA3F2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121834; --surface:#1A2246; --surface-2:#232D5A; --text:#E6EAF8; --muted:#A3ADCF; --line:#2F3A6B;
+  --warn-bg:#3A2418; --warn-text:#F4B897; --note-bg:#3A3018; --note-text:#F3D597;
+  --side:#0E1430; --side-text:#DCE2F7; --side-muted:#8390BE; --navy-2:#8FA3F2;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:4px}
+.app{display:grid;grid-template-columns:300px 1fr;min-height:100%}
+/* Sidebar */
+aside{background:var(--side);color:var(--side-text);padding:24px 18px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.brand svg{width:64px;height:auto}
+.brand span{font-size:13px;color:var(--side-muted)}
+.search{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #3A4A8A;background:rgba(255,255,255,.06);color:#fff;font:inherit;font-size:14px}
+.search::placeholder{color:var(--side-muted)}
+.progress{margin:18px 0 8px;font-size:13px;color:var(--side-muted)}
+.bar{height:6px;background:rgba(255,255,255,.12);border-radius:6px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:var(--yellow);transition:width .3s}
+nav h3{font-size:13px;font-weight:600;color:var(--yellow);margin:22px 0 6px;letter-spacing:.01em}
+nav ul{list-style:none;margin:0;padding:0}
+nav a{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;text-decoration:none;font-size:14.5px;color:var(--side-text)}
+nav a:hover{background:rgba(255,255,255,.07)}
+nav a[aria-current="page"]{background:rgba(255,255,255,.13);color:#fff}
+nav a .dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--side-muted);flex:none}
+nav a.done .dot{background:var(--yellow);border-color:var(--yellow)}
+.side-foot{margin-top:24px;display:flex;gap:8px;flex-wrap:wrap}
+.side-foot button{background:transparent;border:1px solid #3A4A8A;color:var(--side-text);border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+/* Main */
+main{padding:40px clamp(20px,5vw,72px) 80px;max-width:980px;width:100%}
+.topbar{display:none}
+.kicker{font-size:14px;color:var(--orange);font-weight:600;margin:0 0 6px}
+h1{font-family:"IBM Plex Serif",Georgia,serif;font-size:clamp(30px,4vw,42px);line-height:1.15;color:var(--navy);margin:0 0 18px}
+:root[data-theme="dark"] h1{color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) h1{color:#fff}}
+h2{font-size:19px;margin:30px 0 10px}
+p{max-width:70ch}
+/* The path chip: the one bold element */
+.path{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px;background:var(--surface-2);border-radius:999px;padding:6px 6px 6px 14px;margin:0 0 24px;font-size:15px}
+.path b{font-weight:600;color:var(--navy-2)}
+.path .sep{color:var(--muted);margin:0 2px}
+.path button{margin-left:8px;border:0;background:var(--navy);color:#fff;border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:18px 0}
+.card{background:var(--surface);border-radius:14px;padding:18px}
+.card h4{margin:0 0 6px;font-size:16px}
+.card p{margin:0;font-size:14.5px;color:var(--muted)}
+.callout{border-radius:12px;padding:16px 18px;margin:20px 0;max-width:78ch}
+.callout.tip{background:var(--navy);color:#EEF1FB}
+.callout.warn{background:var(--warn-bg);color:var(--warn-text)}
+.callout.note{background:var(--note-bg);color:var(--note-text)}
+.callout strong{display:block;margin-bottom:2px}
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:18px 0}
+ol.steps li{counter-increment:s;position:relative;padding:4px 0 14px 50px;max-width:72ch}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;background:var(--orange);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px}
+ol.steps li:not(:last-child)::after{content:"";position:absolute;left:16px;top:38px;bottom:2px;width:2px;background:var(--line)}
+ul.plain{padding-left:20px;max-width:72ch}
+ul.plain li{margin:4px 0}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.tags span{background:var(--surface-2);border-radius:999px;padding:4px 12px;font-size:14px}
+.error{background:#2B1C18;color:#FCE9DF;border-left:4px solid var(--orange);border-radius:10px;padding:14px 18px;font-family:"IBM Plex Serif",Georgia,serif;font-style:italic;margin:16px 0}
+.example{display:flex;align-items:baseline;gap:14px;background:var(--surface);border-radius:14px;padding:16px 18px;margin:16px 0}
+.example big{font-family:"IBM Plex Serif",serif;font-size:32px;color:var(--orange);font-weight:700;white-space:nowrap}
+.table-wrap{overflow-x:auto;margin:16px 0}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+td a{color:var(--navy-2)}
+.done-row{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:40px;padding-top:20px;border-top:1px solid var(--line)}
+.check{display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:500}
+.check input{width:20px;height:20px;accent-color:var(--orange)}
+.pager{display:flex;gap:10px}
+.pager a{text-decoration:none;border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-size:14px}
+.pager a:hover{background:var(--surface)}
+.home-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:24px}
+.home-cards a{display:block;text-decoration:none;background:var(--surface);border-radius:16px;padding:22px}
+.home-cards a h4{margin:0 0 6px;font-size:18px}
+.home-cards a p{margin:0;color:var(--muted);font-size:14.5px}
+.empty{color:var(--muted);font-size:14px;padding:6px 10px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:.2s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  aside{position:fixed;inset:0 auto 0 0;width:86%;max-width:320px;transform:translateX(-100%);transition:transform .25s;z-index:20;padding-top:calc(24px + env(safe-area-inset-top,0px))}
+  aside.open{transform:none;box-shadow:0 0 0 100vmax rgba(0,0,0,.4)}
+  .topbar{display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--side);color:#fff;padding:12px 18px;padding-top:calc(12px + env(safe-area-inset-top,0px));z-index:10}
+  .topbar button{background:transparent;border:1px solid #3A4A8A;color:#fff;border-radius:8px;padding:6px 12px;font:inherit}
+  main{padding-top:24px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{aside,.topbar,.done-row,.path button{display:none}.app{display:block}}
+</style>
+</head>
+<body>
+<div class="topbar"><strong>Manual Buk</strong><button id="menuBtn" aria-expanded="false" aria-controls="side">Menu</button></div>
+<div class="app">
+  <aside id="side">
+    <div class="brand">
+      <svg viewBox="0 0 120 50" aria-label="Buk"><circle cx="6" cy="27" r="4" fill="#fff"/><path d="M18 6v34h2M18 26c0-8 5-12 11-12s11 4 11 13-5 13-11 13-11-5-11-14" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M52 15v14c0 7 4 11 10 11s10-4 10-11V15" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M84 4v36M84 28l14-13M90 23l10 17" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="112" cy="27" r="4" fill="#fff"/></svg>
+      <span>Manual do usuário</span>
+    </div>
+    <input id="search" class="search" type="search" placeholder="Buscar: férias, CNAB, cargo…" aria-label="Buscar no manual">
+    <div class="progress"><span id="progText">0 de 0 tópicos concluídos</span><div class="bar"><i id="progBar"></i></div></div>
+    <nav id="nav" aria-label="Seções"></nav>
+    <div class="side-foot">
+      <button id="themeBtn" type="button">Alternar tema</button>
+      <button id="resetBtn" type="button">Zerar progresso</button>
+    </div>
+  </aside>
+  <main id="main" tabindex="-1"></main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const MANUALS = {
+  inicio: "Primeiros passos",
+  folha: "Folha de Pagamento"
+};
+const p = (...parts) => parts; // caminho na plataforma
+
+const SECTIONS = [
+/* ---------- PRIMEIROS PASSOS ---------- */
+{ id:"usuarios", m:"inicio", n:"01", title:"Usuários e perfis", path:p("Menu","Usuários e Perfis"),
+  keys:"usuario convite email perfil acesso permissao",
+  html:`
+  <p>Na engrenagem, no topo da tela, acesse o Menu e selecione <b>Usuários e Perfis</b>. A tela reúne todos os usuários ativos.</p>
+  <ol class="steps">
+    <li>Clique em <b>Criar</b>.</li>
+    <li>Escolha o método de cadastro.</li>
+    <li>Preencha as informações do colaborador e salve.</li>
+  </ol>
+  <div class="callout note"><strong>Convite automático</strong>Ao concluir o cadastro, o novo usuário recebe um convite por e-mail para acessar a plataforma.</div>
+  <h2>Perfis de usuário</h2>
+  <p>Os perfis definem quais informações cada pessoa pode ver. O menu é totalmente customizável conforme a necessidade da empresa.</p>
+  <div class="callout tip"><strong>Exemplo</strong>Restringir um perfil para ver apenas nome, telefone e e-mail do colaborador.</div>`},
+{ id:"personalizacao", m:"inicio", n:"02", title:"Personalização da plataforma", path:p("Menu","Parâmetros Gerais"),
+  keys:"logo cor identidade visual barra menu lateral",
+  html:`
+  <p>Na seção <b>Personalize sua Plataforma Buk</b>, faça o upload dos arquivos de mídia da empresa.</p>
+  <div class="grid">
+    <div class="card"><h4>Logo institucional</h4><p>Exibido no painel principal da plataforma.</p></div>
+    <div class="card"><h4>Logo do curso</h4><p>Exibido no módulo de aprendizado.</p></div>
+  </div>
+  <h2>Cores do painel</h2>
+  <div class="grid">
+    <div class="card"><h4>Barra superior</h4><p>Escolha no seletor de cor a tonalidade do topo do painel.</p></div>
+    <div class="card"><h4>Menu lateral</h4><p>Ajuste o tom da barra lateral de navegação.</p></div>
+    <div class="card"><h4>Letras do menu lateral</h4><p>Defina o contraste para garantir boa leitura.</p></div>
+  </div>
+  <div class="callout note"><strong>Dica</strong>Escolha cores com bom contraste entre si: facilita a navegação e reforça a identidade da empresa.</div>`},
+{ id:"empresa", m:"inicio", n:"03", title:"Empresa, divisões e áreas", path:p("Administração","Empresas","Criar empresa"),
+  keys:"cnpj empresa divisao area subarea centro de custos organograma estrutura",
+  html:`
+  <p>Esse passo registra a entidade legal da empresa e as configurações básicas da organização. Os dados podem ser editados a qualquer momento.</p>
+  <h2>Campos obrigatórios</h2>
+  <div class="tags"><span>Nome da empresa</span><span>CNPJ</span><span>Atividade econômica</span><span>E-mail corporativo</span><span>Endereço e cidade</span><span>Seguro de acidentes</span><span>Representante legal</span></div>
+  <h2>Estrutura organizacional</h2>
+  <p>A Buk organiza a empresa em três níveis. Os nomes de cada nível são definidos em Parâmetros Gerais.</p>
+  <ol class="steps">
+    <li><b>Divisão</b>: 1º nível. Pode conter várias Áreas.</li>
+    <li><b>Área</b>: 2º nível. Pode conter várias Subáreas.</li>
+    <li><b>Subárea</b>: 3º nível. Organiza colaboradores e relatórios.</li>
+  </ol>
+  <h2>Criar uma divisão</h2>
+  <div class="path" data-path="Administrativo › Organização › Áreas"><b>Administrativo</b><span class="sep">›</span><b>Organização</b><span class="sep">›</span><b>Áreas</b><button type="button" data-copy>Copiar</button></div>
+  <ol class="steps">
+    <li>Clique em <b>Criar Divisão</b>, no canto superior direito.</li>
+    <li>Preencha o Nome e clique em <b>Salvar</b>. A divisão aparece como uma coluna na tela de Áreas.</li>
+  </ol>
+  <div class="grid">
+    <div class="card"><h4>Criar área</h4><p>Abra a Divisão, clique em Criar Área, preencha o Nome e salve.</p></div>
+    <div class="card"><h4>Criar subárea</h4><p>Dentro da Área, clique em Nova Subárea. Preencha Nome (obrigatório), Centro de Custos e Prefixo Conta Contábil, e vincule os cargos.</p></div>
+  </div>
+  <div class="callout warn"><strong>Pré-requisito para workflows</strong>O organograma precisa estar corretamente preenchido: é ele que direciona as aprovações.</div>`},
+{ id:"cargos", m:"inicio", n:"04", title:"Cargos", path:p("Administrativo","Organização","Cargos","Criar Cargo"),
+  keys:"cargo cbo codigo competencias avaliacao",
+  html:`
+  <p>Preencha nome do cargo, código interno e CBO. Os três são obrigatórios.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Campo</th><th>Obrigatório</th><th>O que é</th></tr>
+    <tr><td>Cargo</td><td>Sim</td><td>Nome do cargo</td></tr>
+    <tr><td>Código</td><td>Sim</td><td>Identificador interno</td></tr>
+    <tr><td>CBO</td><td>Sim</td><td>Classificação Brasileira de Ocupações</td></tr>
+    <tr><td>Descrição</td><td>Não</td><td>Pode ser preenchida depois</td></tr>
+    <tr><td>Requisitos</td><td>Não</td><td>Pode ser preenchido depois</td></tr>
+    <tr><td>Subáreas</td><td>Não</td><td>Vincula o cargo à estrutura</td></tr>
+  </table></div>
+  <div class="callout warn"><strong>Atenção ao código</strong>Aceita apenas letras sem acento, números e underline. Nenhum espaço em branco.</div>
+  <p>Depois de salvar, é possível configurar as <b>Competências</b> do cargo, usadas nas Avaliações de Desempenho.</p>`},
+{ id:"colaboradores", m:"inicio", n:"05", title:"Cadastro de colaboradores", path:p("Administrativo","Colaboradores","Criar Colaborador"),
+  keys:"colaborador cadastro admissao importador planilha excel",
+  html:`
+  <p>O cadastro é feito em um assistente de 3 etapas:</p>
+  <ol class="steps">
+    <li><b>Informações pessoais</b>: dados pessoais, documento e endereço.</li>
+    <li><b>Informações do plano</b> (opcional na criação): dados do plano de benefícios.</li>
+    <li><b>Informações do trabalho</b>: cargo, área, empresa, salário e demais dados contratuais.</li>
+  </ol>
+  <div class="callout note"><strong>Vários colaboradores de uma vez?</strong>Use os Importadores em Massa (planilhas Excel) em vez do cadastro individual.</div>`},
+
+/* ---------- FOLHA ---------- */
+{ id:"processos", m:"folha", n:"01", title:"Processos de folha", path:p("Folha de Pagamento","Processos"),
+  keys:"processo mes abrir competencia sequenciamento calculo automatico",
+  html:`
+  <ul class="plain">
+    <li>Todos os processos mensais ficam reunidos em uma única tela.</li>
+    <li>Sequenciamento automático: após abrir agosto e setembro, outubro já fica disponível para ser habilitado.</li>
+    <li>Até <b>3 meses</b> podem ficar abertos ao mesmo tempo, permitindo adiantar lançamentos antes do fechamento.</li>
+    <li>Com o processo aberto, os colaboradores são calculados automaticamente. Lance só o que varia mês a mês, como um auxílio-creche pontual.</li>
+  </ul>
+  <h2>Calculado desde o dia 1</h2>
+  <div class="grid">
+    <div class="card"><h4>Salário, INSS e IRRF</h4><p>Sem lançamento manual.</p></div>
+    <div class="card"><h4>Adiantamento de 40%</h4><p>Configurado uma vez e replicado mensalmente.</p></div>
+    <div class="card"><h4>Verbas pontuais</h4><p>Lançadas diretamente na ficha do colaborador.</p></div>
+  </div>`},
+{ id:"verbas", m:"folha", n:"02", title:"Verbas", path:p("Folha de Pagamento","Eventos"),
+  keys:"verba rubrica evento provento desconto adiantamento credito natureza incidencia inss irrf fgts importador",
+  html:`
+  <p>Toda nova verba é cadastrada em uma de quatro categorias:</p>
+  <div class="grid">
+    <div class="card"><h4>Provento</h4><p>Valores pagos: auxílio-creche, PLR, horas extras.</p></div>
+    <div class="card"><h4>Desconto</h4><p>Reduções no salário: faltas, consignado.</p></div>
+    <div class="card"><h4>Adiantamento</h4><p>Valores antecipados no mês, como os 40%.</p></div>
+    <div class="card"><h4>Crédito</h4><p>Créditos ao colaborador, como consignado.</p></div>
+  </div>
+  <h2>Configuração em 2 etapas</h2>
+  <ol class="steps">
+    <li><b>Forma de cálculo</b>: Fixo ou Formulado. Valores variáveis são sempre Formulado (ex.: auxílio-creche por faixa etária).</li>
+    <li><b>Valor a ser atribuído</b> (só para Fixo): igual para todos ou diferente por colaborador.</li>
+  </ol>
+  <h2>Natureza da rubrica e incidências</h2>
+  <ul class="plain">
+    <li>Natureza: salário, horas extras, banco de horas, férias, entre outras (códigos do eSocial).</li>
+    <li>Incidência no INSS, IRRF e FGTS: cada uma tem campo próprio e obrigatório.</li>
+  </ul>
+  <div class="callout warn"><strong>Revise com atenção</strong>Natureza e incidências definem a base de cálculo dos encargos e o envio correto ao eSocial.</div>
+  <div class="callout tip"><strong>Lançar para vários colaboradores</strong>Use o importador em Folha de Pagamento › Eventos › Importador.</div>`},
+{ id:"recibos", m:"folha", n:"03", title:"Colaboradores e recibos", path:p("Colaboradores","[Nome]","Recibos de Pagamento"),
+  keys:"ficha holerite recibo encargos gilrat dctfweb terceiros",
+  html:`
+  <h2>Abas da ficha</h2>
+  <div class="tags"><span>Resumo</span><span>Recibos de pagamento</span><span>Documentos</span><span>Histórico</span><span>Diário</span><span>Frequência</span><span>Eventos</span><span>Férias</span></div>
+  <h2>O que você encontra</h2>
+  <ul class="plain">
+    <li>Dados pessoais e de trabalho</li>
+    <li>Recibos de pagamento por mês</li>
+    <li>Holerite para impressão ou assinatura digital</li>
+    <li>Base de salário calculada (INSS e IRRF)</li>
+    <li>FGTS, GILRAT e INSS Patronal</li>
+    <li>Terceiros, para conferência direta com a DCTFWeb</li>
+    <li>Histórico de ajustes de remuneração</li>
+  </ul>`},
+{ id:"ferias", m:"folha", n:"04", title:"Férias", path:p("Ficha do colaborador","Férias","Adicionar Férias"),
+  keys:"ferias saldo abono dias vendidos 13 decimo terceiro recibo",
+  html:`
+  <h2>Campos do formulário</h2>
+  <ul class="plain">
+    <li>Tipo de férias (saldo disponível exibido na hora)</li>
+    <li>Intervalo de datas</li>
+    <li>Período das últimas férias</li>
+    <li>Substituição ou suplência</li>
+    <li>Dias vendidos (opcional)</li>
+    <li>Adiantamento de 13º salário (opcional)</li>
+    <li>Comentário</li>
+  </ul>
+  <div class="example"><big>12,5 → 7,5</big><span>Saldo recalculado ao lançar 5 dias de férias.</span></div>
+  <h2>Gerado automaticamente</h2>
+  <ul class="plain">
+    <li>Recibo extraordinário “Adiantamento de férias”.</li>
+    <li>O recibo nasce <b>oculto</b> e só fica visível ao colaborador após a liberação.</li>
+    <li>Pasta de documentos correspondente na ficha do colaborador.</li>
+  </ul>`},
+{ id:"frequencia", m:"folha", n:"05", title:"Frequência", path:p("Ficha do colaborador","Frequência"),
+  keys:"falta afastamento hora extra adicional noturno sobreaviso suplencia ponto",
+  html:`
+  <div class="grid">
+    <div class="card"><h4>Faltas e afastamentos</h4><p>Registro de ausências, com opção de ativar suplência (substituição temporária do aprovador).</p></div>
+    <div class="card"><h4>Horas extras</h4><p>Por tipo de hora, colaborador e mês. Informe o número de horas para o cálculo.</p></div>
+    <div class="card"><h4>Adicionais</h4><p>Sobreaviso e adicional noturno, configuráveis em horas.</p></div>
+  </div>
+  <div class="callout tip"><strong>Importante</strong>Tudo lançado na aba Frequência é refletido no recibo do mês correspondente.</div>`},
+{ id:"documentos", m:"folha", n:"06", title:"Documentos e workflows", path:p("Ficha do colaborador","Documentos"),
+  keys:"documento pasta modelo trct certificado aviso workflow solicitacao aprovacao",
+  html:`
+  <div class="grid">
+    <div class="card"><h4>Pasta de documentos</h4><p>Upload livre ou organização em pastas por tipo.</p></div>
+    <div class="card"><h4>Modelos de documentos</h4><p>Certificado de férias, avisos, TRCT e ficha de admissão.</p></div>
+    <div class="card"><h4>Gerar documento</h4><p>Em Documentos › Gerar documento, escolha o tipo e o período. TRCT e carta de notificação ficam disponíveis após lançar a rescisão.</p></div>
+  </div>
+  <div class="callout tip"><strong>Arquivamento automático</strong>Todo documento gerado vai para a pasta do colaborador, sem ação adicional.</div>
+  <h2>Ações em cada modelo</h2>
+  <div class="path" data-path="Administrativo › Documentos e assinaturas / Workflow"><b>Administrativo</b><span class="sep">›</span><b>Documentos e assinaturas / Workflow</b><button type="button" data-copy>Copiar</button></div>
+  <div class="table-wrap"><table>
+    <tr><th>Tela</th><th>Ações na linha</th><th>Menu ⋮</th></tr>
+    <tr><td>Modelos de documentos</td><td>Pré-visualizar, editar, excluir (quando permitido)</td><td>—</td></tr>
+    <tr><td>Modelos de workflow (ex.: admissão “Alta simple”)</td><td>Ativar/desativar, duplicar</td><td>Configurar criação de usuário, editar, excluir</td></tr>
+  </table></div>
+  <div class="callout warn"><strong>Pré-requisito</strong>Workflows dependem do organograma da empresa corretamente preenchido.</div>`},
+{ id:"rescisao", m:"folha", n:"07", title:"Rescisão", path:p("Ficha do colaborador","Terminar trabalho"),
+  keys:"rescisao desligamento aviso previo indenizado trabalhado fgts multa anular trabalho recuperado desativar usuario",
+  html:`
+  <div class="grid">
+    <div class="card"><h4>Sem rescisão</h4><p>Quando não há verbas rescisórias a calcular, ex.: afastamento sem desligamento.</p></div>
+    <div class="card"><h4>Com rescisão</h4><p>Calcula automaticamente as verbas rescisórias do colaborador CLT.</p></div>
+  </div>
+  <h2>Etapas do desligamento</h2>
+  <ol class="steps">
+    <li><b>Notificação</b></li>
+    <li><b>Término</b></li>
+    <li><b>Pagamento</b> (até 10 dias)</li>
+    <li><b>Motivo</b></li>
+  </ol>
+  <h2>Aviso prévio</h2>
+  <p>Os dias não são digitados: o sistema calcula a diferença entre notificação e término. Depois, escolha o tipo:</p>
+  <div class="tags"><span>Trabalhado</span><span>Indenizado</span><span>Misto</span></div>
+  <ul class="plain">
+    <li><b>Base do FGTS</b>: obtida no FGTS Digital, para a multa rescisória.</li>
+    <li><b>Carta de notificação</b>: gerada a partir dos modelos de documento.</li>
+    <li><b>Desativar usuário</b>: vem desmarcado por padrão. Marque para bloquear o login.</li>
+  </ul>
+  <h2>Validação do sistema</h2>
+  <div class="error">“Falha na validação: Data de pagamento deve ser maior ou igual a Data de término”</div>
+  <p>Aparece quando o pagamento é anterior ao término (ex.: término 30/09, pagamento 21/09). O botão Terminar fica bloqueado. Ajuste o pagamento para igual ou posterior ao término (ex.: 05/10).</p>
+  <h2>Anular a rescisão</h2>
+  <ul class="plain">
+    <li>Se o desligamento não deve seguir, anule o término do contrato.</li>
+    <li>O sistema exibe “Trabalho recuperado” e o colaborador volta a ativo, sem ajustes manuais.</li>
+    <li>O histórico do processo fica registrado.</li>
+  </ul>`},
+{ id:"configuracoes", m:"folha", n:"08", title:"Configurações e eSocial", path:p("Folha de Pagamento","Configurações"),
+  keys:"parametros teto desconto dias referencia recibo assinavel ocultar salario esocial s-1299 s-1298 s-1280 ambiente testes",
+  html:`
+  <div class="grid">
+    <div class="card"><h4>Parâmetros de referência</h4><p>Dias de referência do mês (30 ou 31), conforme a política da empresa.</p></div>
+    <div class="card"><h4>Teto de desconto</h4><p>Limite máximo de desconto em %, evita saldo negativo após férias longas.</p></div>
+    <div class="card"><h4>Exibição de recibos</h4><p>Ocultar salário-base, restringir visibilidade e habilitar assinatura digital.</p></div>
+  </div>
+  <div class="callout tip"><strong>Em Configurações › Recibos</strong>Toggles: “Ocultar salário-base 0”, “Permitir restringir recibo de pagamento de salário” e “Enviar recibo de pagamento assinável”.</div>
+  <h2>Ambiente de testes</h2>
+  <p>Durante a capacitação, o histórico de testes pode ser limpo antes da migração. Simule admissões, férias, rescisões e adiantamentos.</p>
+  <h2>eSocial</h2>
+  <div class="path" data-path="Administrativo › Eventos eSocial"><b>Administrativo</b><span class="sep">›</span><b>Eventos eSocial</b><button type="button" data-copy>Copiar</button></div>
+  <p>Módulo próprio, fora de Folha de Pagamento. Eventos suportados:</p>
+  <div class="tags"><span>S-1299</span><span>S-1298</span><span>S-1280</span></div>
+  <div class="callout warn"><strong>Antes da primeira folha oficial</strong>Faça lançamentos de teste (uma rescisão, um processo de férias e um adiantamento) e gere o arquivo bancário do mês de teste.</div>`},
+{ id:"arquivo-bancario", m:"folha", n:"09", title:"Arquivo bancário", path:p("Folha de Pagamento","Arquivos e pagamentos","Criar arquivo"),
+  keys:"cnab banco itau pagamento arquivo contabil contabilidade remessa",
+  html:`
+  <p>Usado para salário, adiantamento, férias e rescisão. Gerado em layout CNAB, pronto para importar no banco da empresa (Itaú).</p>
+  <ol class="steps">
+    <li><b>Tipo</b>: selecione “Arquivo de transferência bancária” (para contábil, “Contabilidade”).</li>
+    <li><b>Dados</b>: informe nome, mês dos recibos e data de pagamento (obrigatórios).</li>
+    <li><b>Recibos</b>: filtre o tipo de recibo e adicione colaboradores um a um ou em “Adicionar todos”.</li>
+    <li><b>Download</b>: clique em Criar arquivo, baixe e importe no internet banking.</li>
+  </ol>
+  <div class="grid">
+    <div class="card"><h4>Agrupar recibos</h4><p>Consolida em uma linha colaboradores com mais de uma ficha, na mesma empresa e banco.</p></div>
+    <div class="card"><h4>Recibos sem arquivo</h4><p>A tela sinaliza recibos fora de qualquer arquivo. Baixe a lista e revise antes de pagar.</p></div>
+    <div class="card"><h4>Conta pagadora</h4><p>Carregada das configurações gerais. Não precisa ser informada a cada arquivo.</p></div>
+  </div>`},
+{ id:"adiantamento", m:"folha", n:"10", title:"Adiantamento salarial", path:p("Ficha do colaborador","Eventos","Descontos","Lançar desconto"),
+  keys:"adiantamento 40% vale importador cpf lancamento unico recalcular irrf",
+  html:`
+  <h2>Lançamento individual</h2>
+  <ol class="steps">
+    <li>Confirme que o mês está aberto em Folha de Pagamento › Processos.</li>
+    <li>Na ficha do colaborador, acesse Eventos › Descontos e clique em <b>Lançar desconto</b>.</li>
+    <li>Em Desconto, selecione “Adiantamento De Salário”.</li>
+    <li>Em comprovante de pagamento, mantenha “Salário”: o valor é descontado no recibo mensal.</li>
+    <li>Informe a Data Início (competência) e use “Adicionar mês término” com o <b>mesmo mês</b>. Não é permitido adiantamento para mais de um mês.</li>
+    <li>Informe valor e data de pagamento e clique em <b>Atribuir</b>.</li>
+  </ol>
+  <div class="example"><big>40%</big><span>Parametrizável conforme a convenção coletiva. Evento <code>adiantamento_de_salario</code> (Eventos › Adiantamentos), valor variável, forma de cálculo Adiantamento. Gera recibo extraordinário do tipo Adiantamento.</span></div>
+  <h2>Lançamento em massa</h2>
+  <div class="path" data-path="Folha de Pagamento › Eventos › Importador › Criar Lançamentos"><b>Folha de Pagamento</b><span class="sep">›</span><b>Eventos</b><span class="sep">›</span><b>Importador</b><span class="sep">›</span><b>Criar Lançamentos</b><button type="button" data-copy>Copiar</button></div>
+  <p>Baixe o modelo em “Download Template”, selecione o período, envie o arquivo e clique em Importar Lançamentos.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Campo</th><th>Preenchimento</th></tr>
+    <tr><td>Código de evento</td><td><code>adiantamento_de_salario</code></td></tr>
+    <tr><td>Número de documento</td><td>CPF do colaborador (obrigatório)</td></tr>
+    <tr><td>Código de ficha</td><td>F1 ou matrícula (quando atualizada na plataforma)</td></tr>
+    <tr><td>Tipo de lançamento</td><td>Lançamento único</td></tr>
+  </table></div>
+  <div class="callout tip"><strong>Dica</strong>Mantenha “Recalcular recibos de pagamento” marcada. Os registros corretos são salvos e os erros podem ser baixados para correção.</div>
+  <h2>Conferência</h2>
+  <div class="grid">
+    <div class="card"><h4>Recibo extraordinário</h4><p>Cada adiantamento gera um recibo “Adiantamento”, separado do mensal.</p></div>
+    <div class="card"><h4>Imposto de renda</h4><p>Pago sem IRRF; o imposto é calculado no recibo de salário.</p></div>
+    <div class="card"><h4>Pagamento</h4><p>No arquivo bancário, filtre o tipo de recibo “Adiantamento”.</p></div>
+  </div>
+  <div class="callout note"><strong>Antes de gerar o arquivo bancário</strong>Confira os recibos de adiantamento em Folha de Pagamento › Recibos de pagamento.</div>`},
+{ id:"resumo", m:"folha", n:"—", title:"Resumo: onde fica cada função", path:null,
+  keys:"resumo atalho caminho onde fica",
+  html:`
+  <div class="table-wrap"><table>
+    <tr><th>Função</th><th>Caminho</th></tr>
+    <tr><td>Abrir/gerenciar processo do mês</td><td><a href="#processos">Folha de Pagamento › Processos</a></td></tr>
+    <tr><td>Criar nova verba</td><td><a href="#verbas">Folha de Pagamento › Eventos</a></td></tr>
+    <tr><td>Consultar recibo e encargos</td><td><a href="#recibos">Colaborador › Recibos de Pagamento</a></td></tr>
+    <tr><td>Lançar ou aprovar férias</td><td><a href="#ferias">Ficha do colaborador › Férias</a></td></tr>
+    <tr><td>Registrar falta ou hora extra</td><td><a href="#frequencia">Ficha do colaborador › Frequência</a></td></tr>
+    <tr><td>Rescisão</td><td><a href="#rescisao">Colaborador › Terminar Trabalho</a></td></tr>
+    <tr><td>Modelo de documento ou workflow</td><td><a href="#documentos">Administrativo › Documentos e assinaturas / Workflow</a></td></tr>
+    <tr><td>Teto de desconto e parâmetros</td><td><a href="#configuracoes">Folha de Pagamento › Configurações</a></td></tr>
+    <tr><td>Enviar evento ao eSocial</td><td><a href="#configuracoes">Administrativo › Eventos eSocial</a></td></tr>
+    <tr><td>Gerar arquivo CNAB / contábil</td><td><a href="#arquivo-bancario">Folha de Pagamento › Arquivos e pagamentos</a></td></tr>
+    <tr><td>Adiantamento salarial</td><td><a href="#adiantamento">Ficha › Eventos › Descontos</a></td></tr>
+  </table></div>`}
+];
+
+/* ---------- Estado ---------- */
+const KEY = "buk-manual-progress";
+let done = {};
+try { done = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch(e){ done = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(done)); } catch(e){} };
+
+const $ = s => document.querySelector(s);
+const nav = $("#nav"), main = $("#main");
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),1800); }
+
+function renderNav(filter=""){
+  const q = norm(filter.trim());
+  let html = "";
+  for (const [mk, label] of Object.entries(MANUALS)){
+    const items = SECTIONS.filter(s => s.m===mk && (!q || norm(s.title+" "+s.keys+" "+s.html.replace(/<[^>]+>/g," ")).includes(q)));
+    html += `<h3>${label}</h3><ul>`;
+    html += items.length ? items.map(s=>`<li><a href="#${s.id}" class="${done[s.id]?"done":""}"><span class="dot"></span>${s.title}</a></li>`).join("") : `<li class="empty">Nenhum tópico encontrado.</li>`;
+    html += `</ul>`;
+  }
+  nav.innerHTML = html;
+  markCurrent();
+}
+function markCurrent(){
+  const id = location.hash.slice(1);
+  nav.querySelectorAll("a").forEach(a => a.getAttribute("href")==="#"+id ? a.setAttribute("aria-current","page") : a.removeAttribute("aria-current"));
+}
+function updateProgress(){
+  const total = SECTIONS.length, n = SECTIONS.filter(s=>done[s.id]).length;
+  $("#progText").textContent = `${n} de ${total} tópicos concluídos`;
+  $("#progBar").style.width = (n/total*100)+"%";
+}
+function pathChip(parts){
+  if(!parts) return "";
+  const txt = parts.join(" › ");
+  return `<div class="path" data-path="${txt}">${parts.map(x=>`<b>${x}</b>`).join('<span class="sep">›</span>')}<button type="button" data-copy>Copiar</button></div>`;
+}
+function renderHome(){
+  main.innerHTML = `
+    <p class="kicker">Manual do usuário · Setembro 2026</p>
+    <h1>Configure e opere a Buk, passo a passo</h1>
+    <p>Do primeiro acesso ao fechamento da folha. Use a busca para achar uma função e marque cada tópico como concluído para acompanhar o treinamento.</p>
+    <div class="home-cards">
+      <a href="#usuarios"><h4>Primeiros passos</h4><p>Usuários, personalização, empresa, cargos e colaboradores.</p></a>
+      <a href="#processos"><h4>Folha de Pagamento</h4><p>Processos, verbas, férias, rescisão, arquivo bancário e adiantamento.</p></a>
+      <a href="#resumo"><h4>Onde fica cada função</h4><p>Tabela rápida com o caminho de cada tela.</p></a>
+    </div>
+    <div class="callout warn" style="margin-top:28px"><strong>Antes da primeira folha oficial</strong>Faça lançamentos de teste: uma rescisão, um processo de férias e um adiantamento, e gere o arquivo bancário do mês de teste.</div>
+    <p style="color:var(--muted);font-size:14px;margin-top:30px">Dúvidas? Fale com o time de Onboarding da Buk.</p>`;
+}
+function renderSection(s){
+  const i = SECTIONS.indexOf(s), prev = SECTIONS[i-1], next = SECTIONS[i+1];
+  main.innerHTML = `
+    <p class="kicker">${MANUALS[s.m]}${s.n!=="—" ? " · Seção "+s.n : ""}</p>
+    <h1>${s.title}</h1>
+    ${pathChip(s.path)}
+    ${s.html}
+    <div class="done-row">
+      <label class="check"><input type="checkbox" id="doneBox" ${done[s.id]?"checked":""}> Marcar como concluído</label>
+      <div class="pager">
+        ${prev?`<a href="#${prev.id}">Anterior</a>`:`<a href="#inicio">Início</a>`}
+        ${next?`<a href="#${next.id}">Próximo: ${next.title}</a>`:""}
+      </div>
+    </div>`;
+  $("#doneBox").addEventListener("change", e => {
+    done[s.id] = e.target.checked; if(!e.target.checked) delete done[s.id];
+    save(); updateProgress(); renderNav($("#search").value);
+    toast(e.target.checked ? "Tópico concluído" : "Tópico desmarcado");
+  });
+}
+function route(){
+  const id = location.hash.slice(1);
+  const s = SECTIONS.find(x=>x.id===id);
+  s ? renderSection(s) : renderHome();
+  markCurrent();
+  document.title = (s? s.title+" · " : "") + "Manual Buk";
+  window.scrollTo(0,0);
+  $("#side").classList.remove("open"); $("#menuBtn").setAttribute("aria-expanded","false");
+  main.focus({preventScroll:true});
+}
+
+/* ---------- Eventos ---------- */
+main.addEventListener("click", e => {
+  const b = e.target.closest("[data-copy]"); if(!b) return;
+  const txt = b.closest(".path").dataset.path;
+  (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(()=>toast("Caminho copiado"), ()=>toast(txt));
+});
+$("#search").addEventListener("input", e => renderNav(e.target.value));
+$("#search").addEventListener("keydown", e => {
+  if(e.key==="Enter"){ const a = nav.querySelector("a"); if(a) location.hash = a.getAttribute("href"); }
+});
+$("#menuBtn").addEventListener("click", () => {
+  const o = $("#side").classList.toggle("open"); $("#menuBtn").setAttribute("aria-expanded", o);
+});
+$("#resetBtn").addEventListener("click", () => {
+  if(!confirm("Zerar o progresso de todos os tópicos?")) return;
+  done = {}; save(); updateProgress(); renderNav($("#search").value); route();
+});
+const THEME_KEY="buk-manual-theme";
+try { const t = localStorage.getItem(THEME_KEY); if(t) document.documentElement.dataset.theme = t; } catch(e){}
+$("#themeBtn").addEventListener("click", () => {
+  const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark":"light");
+  const nx = cur==="dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = nx;
+  try { localStorage.setItem(THEME_KEY, nx); } catch(e){}
+});
+window.addEventListener("hashchange", route);
+
+renderNav(); updateProgress(); route();
+</script>
+</body>
+</html>
